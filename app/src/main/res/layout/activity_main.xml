@@ -113,16 +113,17 @@
         />
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="300dp"
         android:background="@drawable/bound"
         android:fillViewport="true"
-        android:layout_weight="12"
+        android:layout_weight="9"
+        android:scrollbars="vertical"
         >
         <!-- 동적 껍데기 레이아웃 -->
         <LinearLayout
             android:id="@+id/dynamic_contents"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:focusable="true"
             android:focusableInTouchMode="true"
@@ -213,6 +214,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:weightSum="10"
             >
             <TextView
                 android:layout_marginLeft="10dp"
@@ -224,8 +226,9 @@
                 />
             <EditText
                 android:id="@+id/etDate"
-                android:layout_width="100dp"
+                android:layout_width="0dp"
                 android:layout_height="40dp"
+                android:layout_weight="5.3"
                 android:textSize="15dp"
                 android:inputType="none"
                 android:focusable="false"
@@ -242,13 +245,20 @@
                 />
             <EditText
                 android:id="@+id/etBank"
-                android:layout_width="50dp"
+                android:layout_width="0dp"
                 android:layout_height="40dp"
+                android:layout_weight="4.3"
                 android:textSize="15dp"
                 android:inputType="text"
                 android:maxLength="3"
                 android:nextFocusDown="@id/etGubun"
                 />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="10"
+            android:orientation="horizontal">
             <TextView
                 android:layout_marginLeft="10dp"
                 android:layout_width="40dp"
@@ -258,18 +268,46 @@
                 />
             <EditText
                 android:id="@+id/etGubun"
-                android:layout_width="60dp"
+                android:layout_width="0dp"
                 android:layout_height="40dp"
+                android:layout_weight="5.3"
                 android:textSize="15dp"
                 android:inputType="text"
                 android:maxLength="4"
                 android:nextFocusDown="@id/etContent"
                 />
+            <TextView
+                android:layout_marginLeft="10dp"
+                android:layout_width="40dp"
+                android:layout_height="20dp"
+                android:text="종류 : "
+                android:textSize="15dp"/>
+            <RadioGroup
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4.7">
+                <RadioButton
+                    android:id="@+id/rdoIncome"
+                    android:layout_width="58dp"
+                    android:layout_height="40dp"
+                    android:text="수입"
+                    android:textSize="12dp"
+                    />
+                <RadioButton
+                    android:id="@+id/rdoExpense"
+                    android:layout_width="58dp"
+                    android:layout_height="40dp"
+                    android:text="지출"
+                    android:textSize="12dp"
+                    />
+            </RadioGroup>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="10">
             <TextView
                 android:layout_marginLeft="10dp"
                 android:layout_width="40dp"
@@ -279,53 +317,26 @@
                 />
             <EditText
                 android:id="@+id/etContent"
-                android:layout_width="310dp"
+                android:layout_width="0dp"
                 android:layout_height="40dp"
+                android:layout_weight="5.3"
                 android:textSize="15dp"
                 android:inputType="text"
                 android:nextFocusDown="@id/etMoney"
                 />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+
             <TextView
                 android:layout_marginLeft="10dp"
                 android:layout_width="40dp"
                 android:layout_height="20dp"
-                android:text="종류 : "
-                android:textSize="15dp"/>
-            <RadioGroup
-                android:orientation="horizontal"
-                android:layout_width="130dp"
-                android:layout_height="match_parent">
-                <RadioButton
-                    android:id="@+id/rdoIncome"
-                    android:layout_width="60dp"
-                    android:layout_height="40dp"
-                    android:text="수입"
-                    />
-                <RadioButton
-                    android:id="@+id/rdoExpense"
-                    android:layout_width="60dp"
-                    android:layout_height="40dp"
-                    android:text="지출"
-                    />
-            </RadioGroup>
-
-            <TextView
-                android:layout_marginLeft="15dp"
-                android:layout_width="40dp"
-                android:layout_height="20dp"
                 android:text="금액 : "
                 android:textSize="15dp"
-                android:onClick="TEST2"
                 />
             <EditText
                 android:id="@+id/etMoney"
-                android:layout_width="125dp"
+                android:layout_width="0dp"
                 android:layout_height="40dp"
+                android:layout_weight="4.3"
                 android:textSize="15dp"
                 android:inputType="number"
                 />
@@ -373,14 +384,5 @@
             android:textSize="15dp"
             android:layout_gravity="right"/>
     </LinearLayout>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:onClick="TEST1"
-        android:clickable="true"
-        android:focusable="true"
-        android:text="테스트"
-        />
 </LinearLayout>
 </ScrollView>

@@ -1,10 +1,12 @@
 package com.chops.chopsaccount;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -30,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
 
 
 /*  진척상황
@@ -100,6 +103,13 @@ public class MainActivity extends AppCompatActivity
 
         //키보드 나올 때 ui 안가리게 하기
         //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
+        //노티 권한 관련.
+        boolean isPermissionAllowed = isNotiPermissionAllowed();
+        if(!isPermissionAllowed) {
+            Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+            startActivity(intent);
+        }
 
         mdbHelper = new DatabaseHelper(this);
         try{
@@ -180,6 +190,9 @@ public class MainActivity extends AppCompatActivity
         };
 
     }
+
+
+
     //컨트롤 초기화
     private void mfnInitControl()
     {
@@ -206,6 +219,23 @@ public class MainActivity extends AppCompatActivity
         metMoney.setOnFocusChangeListener(mliKeyboardDown);
 
         mfnDBReadAccountList();
+    }
+
+    //노티권한주기
+    private boolean isNotiPermissionAllowed()
+    {
+        Set<String> notiListenerSet = NotificationManagerCompat.getEnabledListenerPackages(this);
+        String myPackageName = getPackageName();
+
+        for(String packageName : notiListenerSet) {
+            if(packageName == null) {
+                continue;
+            }
+            if(packageName.equals(myPackageName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     //endregion 안드로이드연결_End
@@ -680,14 +710,15 @@ public class MainActivity extends AppCompatActivity
             }
         }
         Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
-    }
 
+    }
+/*
     //테스트용 클릭이벤트
     public void TEST2(View view)
     {
         //테이블 지우는 거
         mdbHelper.onUpgrade(mdb,1,1);
     }
-
+*/
 
 }
