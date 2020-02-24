@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationManagerCompat;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -355,7 +357,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     //동적으로 가계부 내역 만들기
-    private void mfnDynamicContentsMaker(String p_Seq, String p_strDate, String p_strContents, String p_strMoney)
+    private void mfnDynamicContentsMaker(String p_Seq, String p_strDate, String p_strBank , String p_strContents, String p_strMoney)
         //p_strDate : MMdd
         //p_strContents : 내용
         //p_strMoney : 수/지dynamic_contents
@@ -372,21 +374,33 @@ public class MainActivity extends AppCompatActivity
         tvDay.setText(p_strDate);
         tvDay.setTag("tvDate");
 
+        //은행 TextView 생성
+        TextView tvBank = new TextView(this);
+        tvBank.setWidth((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics()));
+        tvBank.setHeight(ActionBar.LayoutParams.WRAP_CONTENT);
+        tvBank.setPadding((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()),0,0,0);
+        tvBank.setSingleLine(true);
+        tvBank.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+        tvBank.setGravity(Gravity.LEFT);
+        tvBank.setText(p_strBank);
+        tvBank.setTag("tvBank");
+
+
         //내용 TextView 생성
         TextView tvContents = new TextView(this);
         //tvContents.setWidth((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 230, getResources().getDisplayMetrics()));
         //tvContents.setHeight(ActionBar.LayoutParams.WRAP_CONTENT);
         tvContents.setPadding((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()),0,0,0);
         tvContents.setSingleLine(true);
-        tvContents.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+        tvContents.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
         tvContents.setGravity(Gravity.LEFT);
         tvContents.setText(p_strContents);
         tvContents.setTag("tvContents");
         tvContents.setLayoutParams(new TableLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, 1f));
 
-        //수/지 TextView 생성
+        //금액 TextView 생성
         TextView tvMoney = new TextView(this);
-        tvMoney.setWidth((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics()));
+        tvMoney.setWidth((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 110, getResources().getDisplayMetrics()));
         tvMoney.setHeight(ActionBar.LayoutParams.WRAP_CONTENT);
         tvMoney.setPadding((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()),0,(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics()),0);
         tvMoney.setSingleLine(true);
@@ -407,6 +421,7 @@ public class MainActivity extends AppCompatActivity
 
 
         ll.addView(tvDay);
+        ll.addView(tvBank);
         ll.addView(tvContents);
         ll.addView(tvMoney);
 
@@ -451,6 +466,7 @@ public class MainActivity extends AppCompatActivity
         Cursor cu = mdb.rawQuery(str, null);
         String strSeq = "";
         String strDate = "";
+        String strBank = "";
         String strContents = "";
         String strMoney = "";
         int iSum = 0;
@@ -462,6 +478,8 @@ public class MainActivity extends AppCompatActivity
                     strSeq = cu.getString(i);
                 else if (cu.getColumnName(i).toLowerCase().equals("date"))
                     strDate = cu.getString(i).substring(4,8);
+                else if (cu.getColumnName(i).toLowerCase().equals("kinds"))
+                    strBank = cu.getString(i);
                 else if (cu.getColumnName(i).toLowerCase().equals("contents"))
                     strContents = cu.getString(i);
                 else if (cu.getColumnName(i).toLowerCase().equals("money")) {
@@ -469,7 +487,7 @@ public class MainActivity extends AppCompatActivity
                     iSum += Integer.parseInt(cu.getString(i));
                 }
             }
-            mfnDynamicContentsMaker(strSeq, strDate, strContents, strMoney);
+            mfnDynamicContentsMaker(strSeq, strDate, strBank, strContents, strMoney);
         }
         TextView tv = (TextView)findViewById(R.id.tvSum);
         tv.setText(mfnMoneyComma(Integer.toString(iSum)));
@@ -549,19 +567,38 @@ public class MainActivity extends AppCompatActivity
 
     private void mfnDel()
     {
-        if(!mstrSeq.equals(""))
-        {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String strSql = "";
-            strSql += " UPDATE AccountList";
-            strSql += "    SET Valid = 'N'";
-            strSql += "      , Upd_Date = '" + sdf.format(System.currentTimeMillis()) + "'";
-            strSql += "  WHERE Seq = '" + mstrSeq + "'";
-            mdb.execSQL(strSql);
-        }
-        Toast.makeText(this, "삭제성공", Toast.LENGTH_SHORT).show();
-        mfnResetControl();
-        mfnDBReadAccountList();
+
+        AlertDialog.Builder adbMessage = new AlertDialog.Builder(this);
+        adbMessage.setTitle("삭제");
+        adbMessage.setMessage("정말 삭제하시겠습니가?");
+
+        adbMessage.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if(!mstrSeq.equals(""))
+                {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String strSql = "";
+                    strSql += " UPDATE AccountList";
+                    strSql += "    SET Valid = 'N'";
+                    strSql += "      , Upd_Date = '" + sdf.format(System.currentTimeMillis()) + "'";
+                    strSql += "  WHERE Seq = '" + mstrSeq + "'";
+                    mdb.execSQL(strSql);
+                }
+                mfnResetControl();
+                mfnDBReadAccountList();
+            }
+        });
+
+        adbMessage.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+
+        AlertDialog dialog = adbMessage.create();
+        dialog.show();
+
     }
 
     //endregion 내부함수_End
@@ -691,7 +728,10 @@ public class MainActivity extends AppCompatActivity
     //삭제버튼
     public void mfnDelClick(View view)
     {
-        mfnDel();
+        if(!mstrSeq.equals(""))
+        {
+            mfnDel();
+        }
     }
 
     //endregion 클릭이벤트_End

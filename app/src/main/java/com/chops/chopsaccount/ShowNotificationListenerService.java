@@ -55,9 +55,8 @@ public class ShowNotificationListenerService extends NotificationListenerService
 
         //text = "02/17 13:41 032902-**-***560 조평식 스마트폰입금 1 잔액603,245";
         String strText = (String)text;
-        Toast.makeText(getApplicationContext(),text,Toast.LENGTH_LONG);
 
-        if(true)
+        if(title.contains("스타알림") && strText.split(" ").length== 7)
         {
             Date dtToday = Calendar.getInstance().getTime();
             SimpleDateFormat sdfYMD = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
